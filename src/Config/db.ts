@@ -1,11 +1,11 @@
 import { Pool } from "pg";
 import config from ".";
 
-export const pool = new Pool({connectionString: `${config.constion}`})
+export const pool = new Pool({ connectionString: `${config.constion}` });
 
-export const intDB = async ()=>{
-    await pool.query(
-        `CREATE TABLE IF NOT EXISTS users(
+export const intDB = async () => {
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS users(
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(150) NOT NULL UNIQUE,
@@ -13,13 +13,13 @@ export const intDB = async ()=>{
         phone VARCHAR(100) NOT NULL,
         role VARCHAR(100) NOT NULL CHECK(role in('admin','customer'))
         )`
-    );
-    await pool.query(`
+  );
+  await pool.query(`
         CREATE UNIQUE INDEX IF NOT EXISTS
         unique_lower_email
         ON users (LOWER(email))
         `);
-    await pool.query(`
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS vehicles(
         id SERIAL PRIMARY KEY,
         vehicle_name VARCHAR(100) NOT NULL,
@@ -29,7 +29,7 @@ export const intDB = async ()=>{
         availability_status VARCHAR(10) DEFAULT 'available' CHECK(availability_status in ('available', 'booked'))
         )
         `);
-    await pool.query(`
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS bookings(
         id SERIAL PRIMARY KEY,
         customer_id INT REFERENCES users(id) NOT NULL,
@@ -41,8 +41,4 @@ export const intDB = async ()=>{
         CHECK (rent_end_date > rent_start_date)
         )
         `);
-}
-
-
-
-
+};

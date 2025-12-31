@@ -25,11 +25,16 @@ const updateVehicles = async (payload:Record<string,unknown>,vehicle_id:number)=
     const result = await pool.query(`
         UPDATE vehicles SET vehicle_name=$1, type =$2, registration_number=$3, daily_rent_price=$4, availability_status=$5 WHERE id=$6 RETURNING *
         `,[vehicle_name,type, registration_number,daily_rent_price,availability_status,vehicle_id])
-    return result;
+    if(result.rowCount === 0){
+        console.log("rows count");
+        return "rows count 0"
+    }
+    return result.rows[0];
 }
 
 
 const deleteVehicles = async (vehicle_id:number)=>{
+    console.log("vai aice",vehicle_id);
     const checkActiveBooking = await pool.query(`
         SELECT 1 FROM bookings WHERE vehicle_id =$1 AND status='booked' LIMIT 1
         `,[vehicle_id])
@@ -37,14 +42,18 @@ const deleteVehicles = async (vehicle_id:number)=>{
     if(checkActiveBooking.rows.length > 0){
          throw new Error("Vehicle has active bookings. Cannot delete.");
     }
+    console.log("vai aice1",vehicle_id);
 
     const deleteResult = await pool.query(`
         DELETE FROM vehicles WHERE id=$1
         `,[vehicle_id])
-    
+        console.log("vai aice2",vehicle_id);
+
     if(deleteResult.rowCount === 0){
         throw new Error("Not Found")
     }
+        console.log("vai aice3",vehicle_id);
+
     return deleteResult;
 }
 

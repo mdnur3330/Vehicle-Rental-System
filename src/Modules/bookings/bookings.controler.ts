@@ -18,6 +18,7 @@ const getBookings = async(req:Request,res:Response)=>{
 }
 
 const createBooking = async (req:Request,res:Response)=>{
+    console.log("controler asece",req.body);
     try{
         const result = await bookingsServes.createBooking(req.body)
         res.status(201).json({
@@ -33,21 +34,21 @@ const createBooking = async (req:Request,res:Response)=>{
     }
 }
 
-const updateBooking =  async (req:Request,res:Response)=>{
-    try{
-        const result = await bookingsServes.updateBooking(req.body)
-        res.status(201).json({
-            success: true,
-            message: "Updated Booking",
-            result : result.rows
-        })
-    }catch(err:any){
-        res.status(500).json({
-            success: false,
-            message: err.message
-        })
-    }
-}
+// const updateBooking =  async (req:Request,res:Response)=>{
+//     try{
+//         const result = await bookingsServes.updateBooking(req.body)
+//         res.status(201).json({
+//             success: true,
+//             message: "Updated Booking",
+//             result : result.rows
+//         })
+//     }catch(err:any){
+//         res.status(500).json({
+//             success: false,
+//             message: err.message
+//         })
+//     }
+// }
 
 export const bookingsControler ={
     getBookings,
