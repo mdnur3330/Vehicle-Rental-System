@@ -25,7 +25,7 @@ const logInIntoDB = async (email:string,password:string)=>{
         if(!massPass){
             throw new Error("Password Something Went Wroing")
         }
-        const token = jwt.sign({name: user.name, email:user.email, role: user.role},config.secret as string,{
+        const token = jwt.sign({id:user.id,name: user.name, email:user.email, role: user.role},config.secret as string,{
             expiresIn:"3d"
         })
          const { password: _password, ...userWithoutPassword } = user;

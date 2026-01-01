@@ -7,35 +7,35 @@ const getUser = async () => {
   return result;
 };
 
-// const updateUser = async (payload: Record<string, unknown>,id:number) => {
-//   const { name, email, phone, } = payload;
-
-//   const result = await pool.query(
-//     `
-//         UPDATE users SET name=$1, email=$2, phone=$3, role=$4 RETURING * 
-//         `,
-//     [name, email, phone]
-//   );
-//   return result;
-// };
-
-
 const updateUser = async (
   payload: Record<string, unknown>,
-  id: number
+  id: number,
+  role: string
 ) => {
-  const keys = Object.keys(payload);
+
+  const allowedFields =
+    role === "admin"
+      ? ["name", "email", "phone", "role"]
+      : ["name", "email", "phone"];
+
+  const filteredPayload = Object.keys(payload)
+    .filter((key) => allowedFields.includes(key))
+    .reduce((obj: any, key) => {
+      obj[key] = payload[key];
+      return obj;
+    }, {});
+
+  const keys = Object.keys(filteredPayload);
 
   if (keys.length === 0) {
-    throw new Error("No data provided for update");
+    throw new Error("No valid fields provided for update");
   }
-
 
   const setClause = keys
     .map((key, index) => `${key} = $${index + 1}`)
     .join(", ");
 
-  const values = Object.values(payload);
+  const values = Object.values(filteredPayload);
 
   const query = `
     UPDATE users
@@ -47,7 +47,6 @@ const updateUser = async (
   const result = await pool.query(query, [...values, id]);
   return result;
 };
-
 
 const deleteUser = async (user_id: number) => {
   const checkActiveBooking = await pool.query(
